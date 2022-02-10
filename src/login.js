@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import "./login.css";
-import { InputAdornment, Divider, TextField } from "@mui/material";
+import { InputAdornment, Divider, Snackbar, Alert } from "@mui/material";
 import Button from "./components/Button";
-//import TextField from "./components/TextField";
+import TextField from "./components/TextField";
+import EmailIcon from "@mui/icons-material/Email";
+import LockIcon from "@mui/icons-material/Lock";
 import validate from "./utils";
-import email from "./Images/email.svg";
-import password from "./Images/password.svg";
+//import email from "./Images/email.svg";
+//import password from "./Images/password.svg";
 import logo from "./Images/logo.svg";
 import bg from "./Images/bg1.png";
 
 function Login() {
-  const fields = { email: "", password: "" }
+  const fields = { email: "", password: "" };
   const [loginState, setLoginState] = useState(fields);
   const [errorState, setErrorState] = useState(fields);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   function onChangeHandler(e) {
     const { name, value } = e.target;
@@ -31,6 +34,9 @@ function Login() {
     e.preventDefault();
     const error = validate(loginState, fields);
     setErrorState(error);
+    if (error.email === "" && error.password === "") {
+      setLoginSuccess(true);
+    }
   }
 
   return (
@@ -45,13 +51,19 @@ function Login() {
                 id="email"
                 name="email"
                 label="Email Address"
-                variant="outlined"
+                variant="filled"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <img src={email} alt="email-icon" />
+                      <EmailIcon
+                        style={{
+                          color:
+                            errorState.email === "" ? "#a7a7a7" : "#D05E65",
+                        }}
+                      />
                     </InputAdornment>
                   ),
+                  disableUnderline: true,
                 }}
                 value={loginState.email}
                 error={false || errorState.email !== ""}
@@ -62,13 +74,19 @@ function Login() {
                 id="password"
                 name="password"
                 label="Password"
-                variant="outlined"
+                variant="filled"
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <img src={password} alt="password-icon" />
+                      <LockIcon
+                        style={{
+                          color:
+                            errorState.password === "" ? "#a7a7a7" : "#D05E65",
+                        }}
+                      />
                     </InputAdornment>
                   ),
+                  disableUnderline: true,
                 }}
                 value={loginState.password}
                 error={false || errorState.password !== ""}
@@ -92,6 +110,13 @@ function Login() {
         </div>
         <img src={bg} alt="background" className="banner_bg" />
       </div>
+
+      <Snackbar
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={loginSuccess}
+        onClose={() => setLoginSuccess(false)}
+        autoHideDuration={6000}
+      ><Alert severity="success">Login Successful</Alert></Snackbar>
     </div>
   );
 }
